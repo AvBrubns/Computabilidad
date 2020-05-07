@@ -1,0 +1,25 @@
+X011
+X011
+X0Y1
+X0Y1
+X0Y1
+XXY1
+XXY1
+XXYY
+XXYY
+XXYY
+XXYY
+XXYYBB
+XXYYBB
+XXYYBB
+XXYYBB
+la cadena ingresada es valida
+X01
+X01
+X0Y
+X0Y
+X0Y
+XXY
+XXYBB
+XXYBB
+la cadena ingresada es no es valida
