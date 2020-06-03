@@ -10,7 +10,7 @@ public class panel implements ActionListener{
      private JPanel panel;
      private Button run;
      private SpringLayout layout;
-     private JLabel name,arrow,docIzq,docDer;
+     private JLabel name,arrow,docIzq,docDer,macro;
      private int width,heigth;
      private JTextArea rec;
      private JScrollPane scroll; 
@@ -29,10 +29,10 @@ public class panel implements ActionListener{
         layout = new SpringLayout();
         panel.setLayout(layout);
         arrow = new JLabel();
-        rec = new JTextArea(10,44);
+        rec = new JTextArea(10,width/27);
      }
     public Container createPanel(){
-        Color c = Color.decode("#C4F0FF");	
+        Color c = Color.decode("#D9D9D9");	
         panel.setBackground(c);
         
         run = new  Button("Run");
@@ -42,9 +42,12 @@ public class panel implements ActionListener{
 
         name = new JLabel("No Hay Automata Cargado Aun :)");
         name.setFont(new Font("Nunito", Font.PLAIN, 15));
+
+        macro = new JLabel("No Hay Macro cargada :)");
+        macro.setFont(new Font("Nunito", Font.PLAIN, 15));
         
         input = new JTextField();
-        input.setColumns(55);
+        input.setColumns(40);
         input.setEditable(false);
         panel.add(input);
 
@@ -52,6 +55,7 @@ public class panel implements ActionListener{
         arrow.setIcon(imgArrow);
         arrow.setSize(new Dimension(15, 15));
         panel.add(name);
+        panel.add(macro);
         panel.add(arrow);
 
         docIzq = new JLabel();
@@ -68,7 +72,7 @@ public class panel implements ActionListener{
         panel.add(name);
         panel.add(docDer);
 
-        for(int i = 0; i<=32; i++){
+        for(int i = 0; i<=width/27; i++){
             JTextField p = new JTextField("B");
             p.setColumns(1);
             p.setEditable(false);
@@ -90,21 +94,25 @@ public class panel implements ActionListener{
         System.out.println(heigth);
         System.out.println(heigth/4);*/
 
-        layout.putConstraint(SpringLayout.NORTH, name, heigth/10, SpringLayout.NORTH, panel);
-        layout.putConstraint(SpringLayout.WEST, name, width/4, SpringLayout.NORTH, panel);
-        layout.putConstraint(SpringLayout.NORTH, input, 35, SpringLayout.NORTH, name);
-        layout.putConstraint(SpringLayout.WEST, input, width/9, SpringLayout.NORTH, panel);
+        layout.putConstraint(SpringLayout.NORTH, name, heigth/15, SpringLayout.NORTH, panel);
+        layout.putConstraint(SpringLayout.WEST, name, width/3, SpringLayout.NORTH, panel);
+        layout.putConstraint(SpringLayout.NORTH,  macro, heigth/15, SpringLayout.NORTH, name);
+        layout.putConstraint(SpringLayout.WEST, macro, width/3, SpringLayout.NORTH, name);
+        layout.putConstraint(SpringLayout.NORTH, docIzq, 50, SpringLayout.NORTH, macro);
+        layout.putConstraint(SpringLayout.WEST, docIzq, 10, SpringLayout.NORTH, panel);
+        layout.putConstraint(SpringLayout.NORTH,  arrow, -35, SpringLayout.NORTH, docIzq);
+        layout.putConstraint(SpringLayout.WEST, arrow, 48, SpringLayout.NORTH, panel);
+        layout.putConstraint(SpringLayout.NORTH, docDer, 50, SpringLayout.NORTH, macro);
+        layout.putConstraint(SpringLayout.WEST, docDer, width-50, SpringLayout.NORTH, panel);
+        layout.putConstraint(SpringLayout.NORTH, scroll, 85, SpringLayout.NORTH, macro);
+        layout.putConstraint(SpringLayout.WEST, scroll, 130, SpringLayout.NORTH, panel);
+        layout.putConstraint(SpringLayout.NORTH, input, 280, SpringLayout.NORTH, scroll);
+        layout.putConstraint(SpringLayout.WEST, input, 50, SpringLayout.NORTH, panel);
         layout.putConstraint(SpringLayout.NORTH, run, -1, SpringLayout.NORTH, input);
         layout.putConstraint(SpringLayout.WEST, run, 25, SpringLayout.EAST, input);
-        layout.putConstraint(SpringLayout.NORTH, arrow,heigth/4, SpringLayout.NORTH, panel);
-        layout.putConstraint(SpringLayout.WEST,arrow, (width/2)-20, SpringLayout.NORTH, panel);
-        layout.putConstraint(SpringLayout.NORTH, docIzq, 40, SpringLayout.NORTH, arrow);
-        layout.putConstraint(SpringLayout.WEST, docIzq, 25, SpringLayout.NORTH, panel);
-        layout.putConstraint(SpringLayout.NORTH, docDer, 40, SpringLayout.NORTH, arrow);
-        layout.putConstraint(SpringLayout.WEST, docDer, width-50, SpringLayout.NORTH, panel);
-        layout.putConstraint(SpringLayout.NORTH, scroll, 40, SpringLayout.NORTH, docIzq);
-        layout.putConstraint(SpringLayout.WEST, scroll, 25, SpringLayout.EAST, docIzq);
 
+        
+       
         int i=1, anchop=0;
         for(JTextField p: listP){
             anchop=22*i;
@@ -122,6 +130,7 @@ public class panel implements ActionListener{
          if(e.getSource()==run){
             try {
                 String cadena = input.getText();
+                setChar(cadena);
                 if (cadProc(cadena)) {
                     String aux_text=getTex();
                     setTextArea(aux_text+"\nCadena valida");
@@ -155,6 +164,12 @@ public class panel implements ActionListener{
             System.out.println("ERROR getText"+ e.getMessage());
         }
         return aux;
+    }
+    private void setChar(String s){
+        for(int i = 0; i<s.length();i++){
+            JTextField aux= listP.get(i);
+            aux.setText(String.valueOf(s.charAt(i)));
+        }
     }
     private void setName(String n) {
         name.setText(n);
