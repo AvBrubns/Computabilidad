@@ -1,163 +1,142 @@
-import javax.swing.*;
+
 import java.awt.*;
+import javax.swing.*;
 import java.awt.event.*;
-import java.util.ArrayList;
-import java.util.List;
+import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileSystemView;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.KeyStroke;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.io.*;
+import java.util.regex.*;
 
-public class panel implements ActionListener{
-     private JPanel panel;
-     private Button run;
-     private SpringLayout layout;
-     private JLabel name,arrow,docIzq,docDer;
-     private int width,heigth;
-     private JTextArea rec;
-     private JScrollPane scroll; 
-     private List<JTextField> listP;
-     private JTextField input;
-     private window w;
-     private tool t;
-     private turing maquina;
+class tool implements ActionListener{
+	private JMenuBar mainMenuBar;
+	private JMenu menu,macro;
+	private JMenuItem open,exit,save;
+	private turing maquina;
+	private window w;
+	private tool t;
+	private panel p;
+	tool(window ww){
+		w=ww;
+		mainMenuBar = new JMenuBar();
+		menu = new JMenu("Archivo");
+		macro = new JMenu("Macro");
+		open = new JMenuItem("Abrir");
+		exit = new JMenuItem("Salir");
+		save = new JMenuItem("Guardar");
+		maquina = new turing(ww);
+	}
+    public JMenuBar crateTool(){
 
-     panel(int x, int y,window ww){
-        width=x;
-        w=ww;
-        heigth=y;
-        listP = new ArrayList<>();
-        panel = new JPanel();
-        layout = new SpringLayout();
-        panel.setLayout(layout);
-        arrow = new JLabel();
-        rec = new JTextArea(10,44);
-     }
-    public Container createPanel(){
-        Color c = Color.decode("#C4F0FF");	
-        panel.setBackground(c);
-        
-        run = new  Button("Run");
-        run.setEnabled(false);
-        run.addActionListener(this);
-        panel.add(run);
+		
+		//abrir menu con accion alt+a
+		menu.setMnemonic(KeyEvent.VK_A);
+		mainMenuBar.add(menu);
+		mainMenuBar.add(macro);
+		menu.getAccessibleContext().setAccessibleDescription(
+		"descripcion Xd");
+		//abrir archivo CTRL-A
+		open.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, ActionEvent.CTRL_MASK));
+		open.addActionListener(this);
+		menu.add(open);
+		menu.addSeparator();
+		//Guardar CTRL-S
+		save.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK));
+		save.addActionListener(this);
+		menu.add(save);
+		menu.addSeparator();
+		//Salir CTRL-Q
+		exit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, ActionEvent.CTRL_MASK));
+		exit.addActionListener(this);
+		menu.add(exit);
 
-        name = new JLabel("No Hay Automata Cargado Aun :)");
-        name.setFont(new Font("Nunito", Font.PLAIN, 15));
-        
-        input = new JTextField();
-        input.setColumns(55);
-        input.setEditable(false);
-        panel.add(input);
+		
 
-        ImageIcon imgArrow = new ImageIcon(new ImageIcon(".\\icons\\arrow.png").getImage().getScaledInstance(30, 30, Image.SCALE_DEFAULT));
-        arrow.setIcon(imgArrow);
-        arrow.setSize(new Dimension(15, 15));
-        panel.add(name);
-        panel.add(arrow);
-
-        docIzq = new JLabel();
-        ImageIcon imgdocIzq = new ImageIcon(new ImageIcon(".\\icons\\puntos.png").getImage().getScaledInstance(25,20, Image.SCALE_SMOOTH));
-        docIzq.setIcon(imgdocIzq);
-        docIzq.setSize(new Dimension(15, 15));
-        panel.add(name);
-        panel.add(docIzq);
-
-        docDer = new JLabel();
-        ImageIcon imgdocDer = new ImageIcon(new ImageIcon(".\\icons\\puntos.png").getImage().getScaledInstance(25,20, Image.SCALE_SMOOTH));
-        docDer.setIcon(imgdocDer);
-        docDer.setSize(new Dimension(15, 15));
-        panel.add(name);
-        panel.add(docDer);
-
-        for(int i = 0; i<=32; i++){
-            JTextField p = new JTextField("B");
-            p.setColumns(1);
-            p.setEditable(false);
-            p.setHorizontalAlignment(JTextField.CENTER);
-            p.setFont(new Font("SERIF",Font.BOLD,15));
-            listP.add(p);
-            panel.add(p);
-
-        }
-
-        rec.setEditable(false);
-        rec.setLineWrap(true);
-        rec.setFont(new Font("Helvetica Neue", Font.PLAIN, 20));
-        scroll = new JScrollPane(rec);
-
-        panel.add(scroll);
-
-        /* System.out.println(width);
-        System.out.println(heigth);
-        System.out.println(heigth/4);*/
-
-        layout.putConstraint(SpringLayout.NORTH, name, heigth/10, SpringLayout.NORTH, panel);
-        layout.putConstraint(SpringLayout.WEST, name, width/4, SpringLayout.NORTH, panel);
-        layout.putConstraint(SpringLayout.NORTH, input, 35, SpringLayout.NORTH, name);
-        layout.putConstraint(SpringLayout.WEST, input, width/9, SpringLayout.NORTH, panel);
-        layout.putConstraint(SpringLayout.NORTH, run, -1, SpringLayout.NORTH, input);
-        layout.putConstraint(SpringLayout.WEST, run, 25, SpringLayout.EAST, input);
-        layout.putConstraint(SpringLayout.NORTH, arrow,heigth/4, SpringLayout.NORTH, panel);
-        layout.putConstraint(SpringLayout.WEST,arrow, (width/2)-20, SpringLayout.NORTH, panel);
-        layout.putConstraint(SpringLayout.NORTH, docIzq, 40, SpringLayout.NORTH, arrow);
-        layout.putConstraint(SpringLayout.WEST, docIzq, 25, SpringLayout.NORTH, panel);
-        layout.putConstraint(SpringLayout.NORTH, docDer, 40, SpringLayout.NORTH, arrow);
-        layout.putConstraint(SpringLayout.WEST, docDer, width-50, SpringLayout.NORTH, panel);
-        layout.putConstraint(SpringLayout.NORTH, scroll, 40, SpringLayout.NORTH, docIzq);
-        layout.putConstraint(SpringLayout.WEST, scroll, 25, SpringLayout.EAST, docIzq);
-
-        int i=1, anchop=0;
-        for(JTextField p: listP){
-            anchop=22*i;
-            if(anchop == width){
-                System.out.println("entre"+i);
-            }
-            layout.putConstraint(SpringLayout.NORTH, p, -8, SpringLayout.NORTH, docIzq);
-            layout.putConstraint(SpringLayout.WEST, p, anchop, SpringLayout.EAST, docIzq);
-            i++;
-        }
-
-		return panel;
+		return mainMenuBar;
     }
-    public void actionPerformed(ActionEvent e){  
-         if(e.getSource()==run){
-            try {
-                String cadena = input.getText();
-                cadProc(cadena);
-            } catch (Exception r) {
-                System.out.println("Error Run: "+r.getMessage());    
-            }
-         }
-    }
-    private void setTextArea(String s) {
-        try {
-            rec.setText(s);  
-        } catch (Exception e) {
-            System.out.println("Error panel> "+e.getMessage());            
-        }
-    }
-    private String getTex(){
-        String aux=null;
-        //System.out.println("entre");
-        try  {
-            String text=rec.getText();
-            if(text.equals("")){
-                aux="";
-            }else{
-                aux = rec.getText();
-            }
-        } catch (Exception e) {
-            System.out.println("ERROR getText"+ e.getMessage());
-        }
-        return aux;
-    }
-    private void setName(String n) {
-        name.setText(n);
-    }
-    private void setRun(boolean b){
-        run.setEnabled(b);
-        input.setEditable(b);
-    }
-    private tool getTool(){
+    public void actionPerformed(ActionEvent e) {
+		if(e.getSource()  == open){
+			JFileChooser file = new JFileChooser();
+			file.setDialogTitle("Selecione la maquina");
+			file.setAcceptAllFileFilterUsed(false);
+			FileNameExtensionFilter filter = new FileNameExtensionFilter("Solo archivos txt", "txt");
+			file.addChoosableFileFilter(filter);
+			int returnValue = file.showOpenDialog(null);
+			if (returnValue == JFileChooser.APPROVE_OPTION) {
+				  String path = file.getSelectedFile().getPath();
+				  try {
+					Method readFile = turing.class.getDeclaredMethod("readFile", String.class);
+					readFile.setAccessible(true);
+					Boolean res = (Boolean) readFile.invoke(maquina, path);
+					if(res){
+						Method setName = panel.class.getDeclaredMethod("setName", String.class);
+						setName.setAccessible(true);
+						String[] name = path.split(Pattern.quote(File.separator));
+						System.out.println(path);
+						setName.invoke(getPanel(), name[name.length-1]);
+						setRun(true);
+					}else{
+						Method setName = panel.class.getDeclaredMethod("setName", String.class);
+						setName.setAccessible(true);
+						setName.invoke(getPanel(), "Error en el Archivo :,( Comprube que tenga el formato acordado XD");
+						setRun(false);
+					}
+				  } catch (Exception a) {
+					System.out.println("ERROR TOOL:"+a.getMessage());
+				  }
+			   }
+		}
+		if(e.getSource()  == exit){
+			int res = JOptionPane.showConfirmDialog(null, "¿Está Seguro?", "Cerrar Programa!!", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+			// 0=yes, 1=no, 2=cancel
+			if(res == 0){
+				System.exit(0);
+			}
+
+		}
+		if(e.getSource()== save){
+			JFileChooser fileSave = new JFileChooser();
+			fileSave.setDialogTitle("Donde desea guardar?");
+			FileNameExtensionFilter filter = new FileNameExtensionFilter("Solo archivos txt", "txt");
+			fileSave.addChoosableFileFilter(filter);
+			int returnValue = fileSave.showOpenDialog(null);
+			if(returnValue == JFileChooser.APPROVE_OPTION){
+				File file = fileSave.getSelectedFile();
+				try {
+					boolean isFile = false;
+					if(!file.exists())
+					isFile = file.createNewFile();
+					 
+					FileWriter outFile = new FileWriter(file);
+					PrintWriter out = new PrintWriter(outFile,true);
+					out.println(getText());
+					out.close();
+				} catch (Exception w) {
+					//TODO: handle exception
+				}
+
+			}
+			
+		}
+	}
+	private turing getTuring(){
+		return maquina;
+	}
+	private panel getPanel(){
+		try {
+			Method setName = window.class.getDeclaredMethod("getPanel", new Class[0]);
+			setName.setAccessible(true);
+			p = (panel) setName.invoke(w, new Object[0]);
+			return p;
+		} catch (Exception e) {
+			System.out.println("Error:"+e.getMessage());
+		}
+		return p;
+	}
+	private tool getTool(){
 		try {
 			Method setName = window.class.getDeclaredMethod("getTool", new Class[0]);
 			setName.setAccessible(true);
@@ -167,50 +146,28 @@ public class panel implements ActionListener{
 			System.out.println("Error:"+e.getMessage());
 		}
 		return t;
-    }
-    private turing getTuring(){
-        try {
-			Method setName = tool.class.getDeclaredMethod("getTuring", new Class[0]);
-			setName.setAccessible(true);
-			maquina = (turing) setName.invoke(getTool(), new Object[0]);
-			return maquina;
+	}
+	private void setRun(boolean s){
+		try {
+			Method buttonRun = panel.class.getDeclaredMethod("setRun", boolean.class);
+			buttonRun.setAccessible(true);
+			buttonRun.invoke(getPanel(), s);
+		} catch (Exception e) {
+			System.out.println("Error:"+ e.getMessage());
+		}
+	}
+	private String getText(){
+        String text="";
+		try {
+			Method getText = panel.class.getDeclaredMethod("getTex", new Class[0]);
+			getText.setAccessible(true);
+			text = (String) getText.invoke(getPanel(), new Object[0]);
+			return text;
 		} catch (Exception e) {
 			System.out.println("Error:"+e.getMessage());
 		}
-		return maquina;
+		return text;
     }
-    private void printMatriz(){
-        try {
-            Method printMatriz = turing.class.getDeclaredMethod("printMatriz", new Class[0]);
-            printMatriz.setAccessible(true);
-            printMatriz.invoke(getTuring(), new Object[0]);
-        } catch (Exception e) {
-            //TODO: handle exception
-        }
-    }
-    private String cadProc(String cad){
-        String status= "";
-        try {
-            Method setCadena = turing.class.getDeclaredMethod("checkCadena", String.class);
-            setCadena.setAccessible(true);
-            status = (String) setCadena.invoke(getTuring(), cad+":"+0+":"+0);
-        } catch (Exception e) {
-            System.out.println("Error al procesar la cadena"+ e.getMessage());
-        }
-        return status;
-    }
-    private boolean validarStatus(String s){
-        if (s.equals("4")) {
-            String aux_text=getTex();
-            setTextArea(aux_text+"\nCadena valida");
-            return false;
-        } else if(s.equals("-1")) {
-            String aux_text=getTex();
-            setTextArea(aux_text+"\nCadena no valida");
-            return true;
-        }else{
-            System.out.println("sigue en ejecucion");
-            return false;
-        }
-    }
+	
+
 }
