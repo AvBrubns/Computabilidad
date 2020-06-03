@@ -205,6 +205,7 @@ public class turing {
                         //System.out.println("C:"+checkIndex(index, Integer.parseInt(triada[2]), cadena.length-1));
                         cadena[index]=triada[1].charAt(0);   
                         setText(processText(getText(), new String(cadena)));
+                        setChar(triada[1],String.valueOf(index));
                         index = index+Integer.parseInt(triada[2]);
                         aux_String=converCStringtoString(cadena);
                         aux_String=aux_String+":"+String.valueOf(index)+":"+triada[0];
@@ -213,6 +214,7 @@ public class turing {
                         //System.out.println("b+:"+checkIndex(index, Integer.parseInt(triada[2]), cadena.length-1));
                         //Ingresar  new cadena a la izq;
                         cadena[index]=triada[1].charAt(0);   
+                        setChar(triada[1],String.valueOf(index));
                         index=1;
                         index=index+Integer.parseInt(triada[2]);
                         cadena=plusCadena(cadena, plusCadena, true);
@@ -224,6 +226,7 @@ public class turing {
                         //Ingresar  new cadena a la der;
                         //System.out.println("B-:"+checkIndex(index, Integer.parseInt(triada[2]), cadena.length-1));
                         cadena[index]=triada[1].charAt(0);  
+                        setChar(triada[1],String.valueOf(index));
                         cadena=plusCadena(cadena, plusCadena, false);
                         index=index+Integer.parseInt(triada[2]);
                         setText(processText(getText(), new String(cadena)));
@@ -427,14 +430,23 @@ public class turing {
          }
          return aux;
     }
-    /* if((index<=cadSize && index>0)&& i==-1){
-            index=index+i;
-            return index;
-        }else if((index>=0 && index<cadSize) && i==1){
-            index=index+i;
-            return index;
-        }else if(index == && ){
-
-        } */
+    private void moveArrow(String s){
+		try {
+			Method setText = panel.class.getDeclaredMethod("positionArrow", int.class);
+			setText.setAccessible(true);
+			setText.invoke(getPanel(),Integer.parseInt(s));
+		} catch (Exception e) {
+			System.out.println("Error:"+e.getMessage());
+		}
+    }
+    private void setChar(String s,String p){
+		try {
+			Method setText = panel.class.getDeclaredMethod("setChart", String.class,int.class);
+			setText.setAccessible(true);
+			setText.invoke(getPanel(),s,Integer.parseInt(p));
+		} catch (Exception e) {
+			System.out.println("Error:"+e.getMessage());
+		}
+    }
     
 }
