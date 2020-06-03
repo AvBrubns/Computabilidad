@@ -13,7 +13,7 @@ import java.util.regex.*;
 
 class tool implements ActionListener{
 	private JMenuBar mainMenuBar;
-	private JMenu menu;
+	private JMenu menu,macro;
 	private JMenuItem open,exit,save;
 	private turing maquina;
 	private window w;
@@ -23,6 +23,7 @@ class tool implements ActionListener{
 		w=ww;
 		mainMenuBar = new JMenuBar();
 		menu = new JMenu("Archivo");
+		macro = new JMenu("Macro");
 		open = new JMenuItem("Abrir");
 		exit = new JMenuItem("Salir");
 		save = new JMenuItem("Guardar");
@@ -34,6 +35,7 @@ class tool implements ActionListener{
 		//abrir menu con accion alt+a
 		menu.setMnemonic(KeyEvent.VK_A);
 		mainMenuBar.add(menu);
+		mainMenuBar.add(macro);
 		menu.getAccessibleContext().setAccessibleDescription(
 		"descripcion Xd");
 		//abrir archivo CTRL-A
