@@ -135,13 +135,7 @@ public class panel implements ActionListener {
             try {
                 String cadena = input.getText();
                 setChar(cadena);
-                if (cadProc(cadena)) {
-                    String aux_text = getTex();
-                    setTextArea(aux_text + "\nCadena valida");
-                } else {
-                    String aux_text = getTex();
-                    setTextArea(aux_text + "\nCadena no valida");
-                }
+                cadProc(cadena+":0:0");
             } catch (Exception r) {
                 System.out.println("Error Run: " + r.getMessage());
             }
@@ -248,8 +242,7 @@ public class panel implements ActionListener {
         try {
             Method setCadena = turing.class.getDeclaredMethod("checkCadena", String.class);
             setCadena.setAccessible(true);
-            status = (boolean) setCadena.invoke(getTuring(), cad);
-            return status;
+            setCadena.invoke(getTuring(), cad);
         } catch (Exception e) {
             System.out.println("Error al procesar la cadena" + e.getMessage());
         }

@@ -183,6 +183,7 @@ public class turing {
         return res;
        }
     private String processCad(String cad){
+        System.out.println("Entre="+cad);
         String[] aux_cad=cad.split(":");
         String aux_String="";
         char[] cadena = aux_cad[0].toCharArray(), plusCadena={'B','B'};
@@ -205,7 +206,7 @@ public class turing {
                         //System.out.println("C:"+checkIndex(index, Integer.parseInt(triada[2]), cadena.length-1));
                         cadena[index]=triada[1].charAt(0);   
                         setText(processText(getText(), new String(cadena)));
-                        setChar(triada[1],String.valueOf(index));
+                       setChar(triada[1],String.valueOf(index));
                         index = index+Integer.parseInt(triada[2]);
                         aux_String=converCStringtoString(cadena);
                         aux_String=aux_String+":"+String.valueOf(index)+":"+triada[0];
