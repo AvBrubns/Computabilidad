@@ -169,7 +169,7 @@ public class turing {
         status=estStart;
         String aux="";
         int index=0,colum=-1;
-        while(!status.equals("-1") && !status.equals("4")){
+        while(!status.equals("-1") && !status.equals(estEnd)){
             if(isAlphabbet(cadena[index])){
                 if(lockPosit(cadena[index])!=""){
                     colum=Integer.parseInt(lockPosit(cadena[index]));

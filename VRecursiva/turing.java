@@ -9,18 +9,20 @@ import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.Thread;
+import java.util.*; 
 
 public class turing {
     private List<List<String>> matriz;
     private ArrayList<String> cinta;
+    private ArrayList<String[]> listMacro;
     private String simIN = "(1|0)+";
     private String simCin = "";
     private String commen = "^//.*";
     private String intSim = "^[^\\d].*";
-    private String estStart = "";
-    private String estEnd = "";
-    private int numEst=0;
-    private int numSim=0;
+    private String estStart = "",estStartM= "";
+    private String estEnd = "",estEndM= "";
+    private int numEst=0,numEstM=0;
+    private int numSim=0,numSimM=0;
     private String line;
     private File file;
     private Method writeTex,getText;
@@ -137,9 +139,15 @@ public class turing {
     private void printMatriz(){
         System.out.println(matriz.size());
         System.out.println("-------------------------");
-        System.out.println( matriz.get(0).get(0) + " "+ matriz.get(1).get(0) + " " + matriz.get(2).get(0)+" "+ matriz.get(3).get(0)+" "+ matriz.get(4).get(0));
-        for (int i = 1; i <= matriz.get(0).size() - 1; i++) {
-            System.out.println( matriz.get(0).get(i) + " "+ matriz.get(1).get(i) + " " + matriz.get(2).get(i)+" "+ matriz.get(3).get(i)+" "+ matriz.get(4).get(i));
+        //System.out.println( matriz.get(0).get(0) + " "+ matriz.get(1).get(0) + " " + matriz.get(2).get(0)+" "+ matriz.get(3).get(0)+" "+ matriz.get(4).get(0));
+        for (int i = 0; i <= matriz.get(0).size() - 1; i++) {
+            for(int j = 0; j < numEst ; j++) 
+            //System.out.println( matriz.get(i).get(j) + " "+ matriz.get(i).get(i) + " " + matriz.get(2).get(i)+" "+ matriz.get(3).get(i)+" "+ matriz.get(4).get(i));
+            if (j==numEst-1) {
+                System.out.print(matriz.get(j).get(i)+"\n");
+            }else{
+                System.out.print(matriz.get(j).get(i)+"  ");
+            }
         }
     }
     private boolean fileCheck(){
@@ -162,11 +170,11 @@ public class turing {
         }
     }
     private String checkCadena(String cad){
-        System.out.println("Llego cadena:"+cad);
+        //System.out.println("Llego cadena:"+cad);
         String[] aux_cad=cad.split(":");
         status=aux_cad[2];
         String res="";
-        if(status.equals("4")){
+        if(status.equals(estEnd)){
             System.out.println("Valida");
             setText(processText(getText(), "la cadena ingresada es valida"));
             res="4";
@@ -183,22 +191,22 @@ public class turing {
         return res;
        }
     private String processCad(String cad){
-        System.out.println("Entre="+cad);
+        //System.out.println("Entre="+cad);
         String[] aux_cad=cad.split(":");
         String aux_String="";
         char[] cadena = aux_cad[0].toCharArray(), plusCadena={'B','B'};
         status=aux_cad[2];
         String aux="";
         int index=Integer.parseInt(aux_cad[1]),colum=-1;
-        System.out.println(status);
+        //System.out.println(status);
         if(isAlphabbet(cadena[index])){
             if(lockPosit(cadena[index])!=""){
                 colum=Integer.parseInt(lockPosit(cadena[index]));
                 //System.out.println(matriz.get(colum).get(Integer.parseInt(status)+1));
                 aux=matriz.get(colum).get(Integer.parseInt(status)+1);
                 String[] triada=aux.split(":");
-                System.out.println("Cadena:"+new String(cadena));
-                System.out.println("Triada:"+aux);
+                //System.out.println("Cadena:"+new String(cadena));
+                //System.out.println("Triada:"+aux);
                 //System.out.println("Triada:"+converMStringtoString(triada));
                 //Thread.sleep(2000);
                 if(!triada[0].equals("-1")){
@@ -448,6 +456,64 @@ public class turing {
 		} catch (Exception e) {
 			System.out.println("Error:"+e.getMessage());
 		}
+    }
+
+    private boolean addMacro(String path){
+        String aux="";
+        try {
+            file = new File(path);
+            BufferedReader bf = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF8"));
+            Pattern stringComment = Pattern.compile(commen);
+            while((line=bf.readLine())!=null){
+                mat = stringComment.matcher(line);
+                //procesar linea
+                if(line.length()>1 && !mat.matches() ){
+                    String[] cadplit= line.split(" ");
+                    //Identificar numero de esatdo y numero de simbolos de la cinta
+                    if(cadplit.length == 2){
+                        if(isNumeric(cadplit[0]) &&  isNumeric(cadplit[1])){
+                            numEstM=Integer.parseInt(cadplit[0]);
+                            numSimM=Integer.parseInt(cadplit[1]);
+                        }else{
+                            return  false;
+                        }
+                        
+                    }else if(cadplit.length == 1){
+                        //leyendo la cadena del alfabeto
+                    //Tabla de trancisiones
+                    }else{
+                        aux="";
+                        System.out.println(Arrays.toString(cadplit));
+                        listMacro.add(cadplit);
+                    }
+                }else{
+                    Pattern pat = Pattern.compile(intSim);
+                    mat = pat.matcher(line);
+
+                    if(!mat.matches() && isNumeric(line)){
+                        System.out.println("no comment :"+line);
+                        if(estStart == ""){
+                            estStartM=line;
+                        }else{
+                            estEndM=line;
+                        }
+
+                    }else{
+                        System.out.println("comment:"+line);
+                    }
+                }
+               
+            }
+        bf.close();
+        } catch (Exception e) {
+            System.out.println("Error Lectura archivo:"+ e.getMessage());
+            return fileCheck();
+        }
+        return fileCheck();
+    }
+
+    private void addTable(){
+        
     }
     
 }
