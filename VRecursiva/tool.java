@@ -42,7 +42,7 @@ class tool implements ActionListener{
 		macro.setMnemonic(KeyEvent.VK_M);
 		mainMenuBar.add(macro);
 
-		//abri macro con accion alt+u
+		//abri utilitis con accion alt+u
 		utilitis.setMnemonic(KeyEvent.VK_U);
 		mainMenuBar.add(utilitis);
 		menu.getAccessibleContext().setAccessibleDescription(

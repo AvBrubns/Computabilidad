@@ -13,8 +13,8 @@ import java.util.regex.*;
 
 class tool implements ActionListener{
 	private JMenuBar mainMenuBar;
-	private JMenu menu,macro;
-	private JMenuItem open,exit,save;
+	private JMenu menu,utilitis,macro;
+	private JMenuItem open,exit,save,addMacro,printTable;
 	private turing maquina;
 	private window w;
 	private tool t;
@@ -23,10 +23,13 @@ class tool implements ActionListener{
 		w=ww;
 		mainMenuBar = new JMenuBar();
 		menu = new JMenu("Archivo");
+		utilitis = new JMenu("Utilitis");
 		macro = new JMenu("Macro");
 		open = new JMenuItem("Abrir");
 		exit = new JMenuItem("Salir");
 		save = new JMenuItem("Guardar");
+		addMacro =  new JMenuItem("Add Macro");
+		printTable = new  JMenuItem("Print Tabla");
 		maquina = new turing(ww);
 	}
     public JMenuBar crateTool(){
@@ -35,7 +38,13 @@ class tool implements ActionListener{
 		//abrir menu con accion alt+a
 		menu.setMnemonic(KeyEvent.VK_A);
 		mainMenuBar.add(menu);
+		//abri macro con accion alt+m
+		macro.setMnemonic(KeyEvent.VK_M);
 		mainMenuBar.add(macro);
+
+		//abri utilitis con accion alt+u
+		utilitis.setMnemonic(KeyEvent.VK_U);
+		mainMenuBar.add(utilitis);
 		menu.getAccessibleContext().setAccessibleDescription(
 		"descripcion Xd");
 		//abrir archivo CTRL-A
@@ -53,41 +62,25 @@ class tool implements ActionListener{
 		exit.addActionListener(this);
 		menu.add(exit);
 
+		// add Macro CTRL-M
+		addMacro.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, ActionEvent.CTRL_MASK));
+		addMacro.addActionListener(this);
+		macro.add(addMacro);
+
+		// add Macro CTRL-p
+		printTable.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, ActionEvent.CTRL_MASK));
+		printTable.addActionListener(this);
+		utilitis.add(printTable);
+
 		
 
 		return mainMenuBar;
     }
     public void actionPerformed(ActionEvent e) {
 		if(e.getSource()  == open){
-			JFileChooser file = new JFileChooser();
-			file.setDialogTitle("Selecione la maquina");
-			file.setAcceptAllFileFilterUsed(false);
-			FileNameExtensionFilter filter = new FileNameExtensionFilter("Solo archivos txt", "txt");
-			file.addChoosableFileFilter(filter);
-			int returnValue = file.showOpenDialog(null);
-			if (returnValue == JFileChooser.APPROVE_OPTION) {
-				  String path = file.getSelectedFile().getPath();
-				  try {
-					Method readFile = turing.class.getDeclaredMethod("readFile", String.class);
-					readFile.setAccessible(true);
-					Boolean res = (Boolean) readFile.invoke(maquina, path);
-					if(res){
-						Method setName = panel.class.getDeclaredMethod("setName", String.class);
-						setName.setAccessible(true);
-						String[] name = path.split(Pattern.quote(File.separator));
-						System.out.println(path);
-						setName.invoke(getPanel(), name[name.length-1]);
-						setRun(true);
-					}else{
-						Method setName = panel.class.getDeclaredMethod("setName", String.class);
-						setName.setAccessible(true);
-						setName.invoke(getPanel(), "Error en el Archivo :,( Comprube que tenga el formato acordado XD");
-						setRun(false);
-					}
-				  } catch (Exception a) {
-					System.out.println("ERROR TOOL:"+a.getMessage());
-				  }
-			   }
+			String path = getPath();
+			boolean res = read_File(path);
+			setText(res, path);
 		}
 		if(e.getSource()  == exit){
 			int res = JOptionPane.showConfirmDialog(null, "¿Está Seguro?", "Cerrar Programa!!", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
@@ -98,28 +91,14 @@ class tool implements ActionListener{
 
 		}
 		if(e.getSource()== save){
-			JFileChooser fileSave = new JFileChooser();
-			fileSave.setDialogTitle("Donde desea guardar?");
-			FileNameExtensionFilter filter = new FileNameExtensionFilter("Solo archivos txt", "txt");
-			fileSave.addChoosableFileFilter(filter);
-			int returnValue = fileSave.showOpenDialog(null);
-			if(returnValue == JFileChooser.APPROVE_OPTION){
-				File file = fileSave.getSelectedFile();
-				try {
-					boolean isFile = false;
-					if(!file.exists())
-					isFile = file.createNewFile();
-					 
-					FileWriter outFile = new FileWriter(file);
-					PrintWriter out = new PrintWriter(outFile,true);
-					out.println(getText());
-					out.close();
-				} catch (Exception w) {
-					//TODO: handle exception
-				}
-
-			}
+			saveFile();
 			
+		}
+		if (e.getSource() == printTable) {
+			print_Table();
+		}
+		if (e.getSource() == addMacro){
+			//add_Macro();
 		}
 	}
 	private turing getTuring(){
@@ -167,7 +146,80 @@ class tool implements ActionListener{
 			System.out.println("Error:"+e.getMessage());
 		}
 		return text;
-    }
-	
+	}
+	private void print_Table(){
+		try {
+			Method printT = turing.class.getDeclaredMethod("printMatriz", new Class[0]);
+			printT.setAccessible(true);
+			printT.invoke(maquina, new Object[0]);
+		} catch (Exception e) {
+			System.out.println("Error:"+e.getMessage());
+		}
+	}
+	private String getPath(){
+		String path="";
+		JFileChooser file = new JFileChooser();
+			file.setDialogTitle("Selecione el Archivo");
+			file.setAcceptAllFileFilterUsed(false);
+			FileNameExtensionFilter filter = new FileNameExtensionFilter("Solo archivos txt", "txt");
+			file.addChoosableFileFilter(filter);
+			int returnValue = file.showOpenDialog(null);
+			if (returnValue == JFileChooser.APPROVE_OPTION) {
+				  path = file.getSelectedFile().getPath();
+			}
+			   return path;
+	}
+	private boolean read_File(String path){
+		boolean res=false;
+		try {
+			Method readFile = turing.class.getDeclaredMethod("readFile", String.class);
+			readFile.setAccessible(true);
+			res = (Boolean) readFile.invoke(maquina, path);
+		}catch(Exception e ){
+			System.out.println("Error:"+e.getMessage());
+			}
+		return res;
+	}
+	private void setText(boolean res,String path ){
+		try {
+			if(res){
+				Method setName = panel.class.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             getDeclaredMethod("setName", String.class);
+				setName.setAccessible(true);
+				String[] name = path.split(Pattern.quote(File.separator));
+				System.out.println(path);
+				setName.invoke(getPanel(), name[name.length-1]);
+				setRun(true);
+			}else{
+				Method setName = panel.class.getDeclaredMethod("setName", String.class);
+				setName.setAccessible(true);
+				setName.invoke(getPanel(), "Error en el Archivo :,( Comprube que tenga el formato acordado XD");
+				setRun(false);
+			}
+		} catch (Exception e) {
+			System.out.println("Error:"+e.getMessage());
+		}
+	}
+	private void saveFile(){
+		JFileChooser fileSave = new JFileChooser();
+		fileSave.setDialogTitle("Donde desea guardar?");
+		FileNameExtensionFilter filter = new FileNameExtensionFilter("Solo archivos txt", "txt");
+		fileSave.addChoosableFileFilter(filter);
+		int returnValue = fileSave.showOpenDialog(null);
+		if(returnValue == JFileChooser.APPROVE_OPTION){
+			File file = fileSave.getSelectedFile();
+			try {
+				boolean isFile = false;
+				if(!file.exists())
+				isFile = file.createNewFile();
+				 
+				FileWriter outFile = new FileWriter(file);
+				PrintWriter out = new PrintWriter(outFile,true);
+				out.println(getText());
+				out.close();
+			} catch (Exception w) {
+				System.out.println("error:"+w.getMessage());
+			}
+		}
+}
 
 }

@@ -137,9 +137,15 @@ public class turing {
     private void printMatriz(){
         System.out.println(matriz.size());
         System.out.println("-------------------------");
-        System.out.println( matriz.get(0).get(0) + " "+ matriz.get(1).get(0) + " " + matriz.get(2).get(0)+" "+ matriz.get(3).get(0)+" "+ matriz.get(4).get(0));
-        for (int i = 1; i <= matriz.get(0).size() - 1; i++) {
-            System.out.println( matriz.get(0).get(i) + " "+ matriz.get(1).get(i) + " " + matriz.get(2).get(i)+" "+ matriz.get(3).get(i)+" "+ matriz.get(4).get(i));
+        //System.out.println( matriz.get(0).get(0) + " "+ matriz.get(1).get(0) + " " + matriz.get(2).get(0)+" "+ matriz.get(3).get(0)+" "+ matriz.get(4).get(0));
+        for (int i = 0; i <= matriz.get(0).size() - 1; i++) {
+            for(int j = 0; j < numEst ; j++) 
+            //System.out.println( matriz.get(i).get(j) + " "+ matriz.get(i).get(i) + " " + matriz.get(2).get(i)+" "+ matriz.get(3).get(i)+" "+ matriz.get(4).get(i));
+            if (j==numEst-1) {
+                System.out.print(matriz.get(j).get(i)+"\n");
+            }else{
+                System.out.print(matriz.get(j).get(i)+"  ");
+            }
         }
     }
     private boolean fileCheck(){
@@ -182,6 +188,7 @@ public class turing {
                     if(!triada[1].equals("-") && checkIndex(index, Integer.parseInt(triada[2]), cadena.length-1) == "c" ){
                         //System.out.println("C:"+checkIndex(index, Integer.parseInt(triada[2]), cadena.length-1));
                         setChar(triada[1],String.valueOf(index));
+                        moveArrow(triada[2]);
                         cadena[index]=triada[1].charAt(0);   
                         setText(processText(getText(), new String(cadena)));
                         index = index+Integer.parseInt(triada[2]);
@@ -190,6 +197,7 @@ public class turing {
                         //Ingresar  new cadena a la izq;
                         cadena[index]=triada[1].charAt(0);   
                         setChar(triada[1],String.valueOf(index));
+                        moveArrow(triada[2]);
                         index=1;
                         index=index+Integer.parseInt(triada[2]);
                         cadena=plusCadena(cadena, plusCadena, true);
@@ -199,6 +207,7 @@ public class turing {
                         //System.out.println("B-:"+checkIndex(index, Integer.parseInt(triada[2]), cadena.length-1));
                         cadena[index]=triada[1].charAt(0);  
                         setChar(triada[1],String.valueOf(index));
+                        moveArrow(triada[2]);
                         cadena=plusCadena(cadena, plusCadena, false);
                         index=index+Integer.parseInt(triada[2]);
                         setText(processText(getText(), new String(cadena)));
@@ -231,7 +240,7 @@ public class turing {
                 break;
             }
         }
-        if(status.equals("4")){
+        if(status.equals(estEnd)){
             statusCad=!statusCad;
         }
 
