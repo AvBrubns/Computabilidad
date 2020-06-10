@@ -189,6 +189,9 @@ public class panel implements ActionListener {
     private void setName(String n) {
         name.setText(n);
     }
+    private void setNameM(String n) {
+        macro.setText(n);
+    }
 
     private void setRun(boolean b) {
         run.setEnabled(b);

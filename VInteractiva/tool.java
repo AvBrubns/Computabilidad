@@ -98,7 +98,9 @@ class tool implements ActionListener{
 			print_Table();
 		}
 		if (e.getSource() == addMacro){
-			add_Macro();
+			String path = getPath();
+			boolean res =add_Macro(path);
+			setTextM(res, path);
 		}
 	}
 	private turing getTuring(){
@@ -183,7 +185,7 @@ class tool implements ActionListener{
 	private void setText(boolean res,String path ){
 		try {
 			if(res){
-				Method setName = panel.class.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             getDeclaredMethod("setName", String.class);
+				Method setName = panel.class.getDeclaredMethod("setName", String.class);
 				setName.setAccessible(true);
 				String[] name = path.split(Pattern.quote(File.separator));
 				System.out.println(path);
@@ -191,6 +193,24 @@ class tool implements ActionListener{
 				setRun(true);
 			}else{
 				Method setName = panel.class.getDeclaredMethod("setName", String.class);
+				setName.setAccessible(true);
+				setName.invoke(getPanel(), "Error en el Archivo :,( Comprube que tenga el formato acordado XD");
+				setRun(false);
+			}
+		} catch (Exception e) {
+			System.out.println("Error:"+e.getMessage());
+		}
+	}
+	private void setTextM(boolean res,String path ){
+		try {
+			if(res){
+				Method setName = panel.class.getDeclaredMethod("setNameM", String.class);setName.setAccessible(true);
+				String[] name = path.split(Pattern.quote(File.separator));
+				System.out.println(path);
+				setName.invoke(getPanel(), name[name.length-1]);
+				setRun(true);
+			}else{
+				Method setName = panel.class.getDeclaredMethod("setNameM", String.class);
 				setName.setAccessible(true);
 				setName.invoke(getPanel(), "Error en el Archivo :,( Comprube que tenga el formato acordado XD");
 				setRun(false);
@@ -222,12 +242,12 @@ class tool implements ActionListener{
 		}
 	}
 
-	private boolean add_Macro(){
+	private boolean add_Macro(String path){
 		boolean res=false;
 		try {
 			Method addM = turing.class.getDeclaredMethod("addM", String.class);
 			addM.setAccessible(true);
-			res = (Boolean) addM.invoke(maquina, getPath());
+			res = (Boolean) addM.invoke(maquina, path);
 		}catch(Exception e ){
 			System.out.println("Error:"+e.getMessage());
 			}

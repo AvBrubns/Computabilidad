@@ -467,16 +467,18 @@ public class turing {
                
             }
         bf.close();
-        System.out.println(estStartM);
-        addT();
+        //System.out.println(estStartM);
+        res=addT();
         } catch (Exception e) {
             System.out.println("Error al cargar macro:"+ e.getMessage());
         }
         return res;
     }
-    private void addT(){
-        String aux="";
-        int flag=0,index=0,posit=Integer.parseInt(estStartM)+1;
+    private boolean addT(){
+        boolean res = false;
+        try {
+            String aux="";
+            int flag=0,index=0,posit=Integer.parseInt(estStartM)+1;
         //System.out.println("posit;"+posit);
         //System.exit(1);
         for (String string[] : tabla) {
@@ -510,5 +512,10 @@ public class turing {
                 }
             }
         }
+        res = true;
+    } catch (Exception e) {
+        System.out.println("Error al agregar contenido a la tabla:"+e.getMessage());
+    }
+        return res;
     }
 }
