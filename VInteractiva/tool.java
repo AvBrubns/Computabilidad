@@ -98,7 +98,7 @@ class tool implements ActionListener{
 			print_Table();
 		}
 		if (e.getSource() == addMacro){
-			//add_Macro();
+			add_Macro();
 		}
 	}
 	private turing getTuring(){
@@ -220,6 +220,18 @@ class tool implements ActionListener{
 				System.out.println("error:"+w.getMessage());
 			}
 		}
-}
+	}
+
+	private boolean add_Macro(){
+		boolean res=false;
+		try {
+			Method addM = turing.class.getDeclaredMethod("addM", String.class);
+			addM.setAccessible(true);
+			res = (Boolean) addM.invoke(maquina, getPath());
+		}catch(Exception e ){
+			System.out.println("Error:"+e.getMessage());
+			}
+		return res;
+	}
 
 }

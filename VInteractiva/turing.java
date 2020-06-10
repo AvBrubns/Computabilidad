@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.regex.*;
 import java.io.BufferedReader;
@@ -6,6 +7,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.Thread;
@@ -13,14 +15,15 @@ import java.lang.Thread;
 public class turing {
     private List<List<String>> matriz;
     private ArrayList<String> cinta;
+    private ArrayList<String[]> tabla;
     private String simIN = "(1|0)+";
-    private String simCin = "";
+    private String simCin = "",simCinM= "";
     private String commen = "^//.*";
     private String intSim = "^[^\\d].*";
-    private String estStart = "";
-    private String estEnd = "";
-    private int numEst=0;
-    private int numSim=0;
+    private String estStart = "",estStartM= "";
+    private String estEnd = "",estEndM= "";
+    private int numEst=0,numEstM=0;
+    private int numSim=0,numSimM=0;
     private String line;
     private File file;
     private Method writeTex,getText;
@@ -41,28 +44,34 @@ public class turing {
             BufferedReader bf = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF8"));
             Pattern stringComment = Pattern.compile(commen);
             while((line=bf.readLine())!=null){
+                line = line.trim();
                 mat = stringComment.matcher(line);
-                if(line.length()>1 && !mat.matches() ){
+                if(line.length()>1 && !mat.matches() && estStart.equals("") ){
                     String[] cadplit= line.split(" ");
                     if(cadplit.length == 2){
                         if(isNumeric(cadplit[0]) &&  isNumeric(cadplit[1])){
                             numEst=Integer.parseInt(cadplit[0]);
                             numSim=Integer.parseInt(cadplit[1]);
+                            System.out.println("numEST:"+numEst);
+                            System.out.println("numsim:"+numSim);
                         }else{
-                            return estado = false;
+                            return false;
                         }
                         
                         matriz = new ArrayList<List<String>>();
-                        for(int i = 0; i<=numSim;i++){
+                        for(int i = 0; i<numSim;i++){
+                            System.out.println("Entre");
                             matriz.add(new ArrayList<String>());
                         }
                     }else if(cadplit.length == 1){
+                        System.out.println(line);
                         char[] charSplit = line.toCharArray();
                         aux="(";
                         for(int i=0; i<numSim;i++ ){
                             matriz.get(i).add(Character.toString(charSplit[i]));
                             aux=aux+Character.toString(charSplit[i])+" ";
                         }
+                        System.out.println("Alfabeto"+aux);
                         aux= aux.trim();
                         aux=aux.replace(" ", "|");
                         aux=aux+")+";
@@ -93,7 +102,6 @@ public class turing {
                                 aux="";
                                 count=0;
                             }
-
                         }
                     }
                 }else{
@@ -117,14 +125,13 @@ public class turing {
         estado = fileCheck();
         } catch (Exception e) {
             System.out.println("Error Lectura archivo:"+ e.getMessage());
+            System.out.println(line);
             return fileCheck();
         }
         return fileCheck();
     }
     public static boolean isNumeric(String cadena) {
-
         boolean resultado;
-
         try {
             Integer.parseInt(cadena);
             resultado = true;
@@ -135,17 +142,17 @@ public class turing {
         return resultado;
     }
     private void printMatriz(){
-        System.out.println(matriz.size());
-        System.out.println("-------------------------");
-        //System.out.println( matriz.get(0).get(0) + " "+ matriz.get(1).get(0) + " " + matriz.get(2).get(0)+" "+ matriz.get(3).get(0)+" "+ matriz.get(4).get(0));
-        for (int i = 0; i <= matriz.get(0).size() - 1; i++) {
-            for(int j = 0; j < numEst ; j++) 
+        try {
+            System.out.println(matriz.size());
+            System.out.println("-------------------------");
+            //System.out.println( matriz.get(0).get(0) + " "+ matriz.get(1).get(0) + " " + matriz.get(2).get(0)+" "+ matriz.get(3).get(0)+" "+ matriz.get(4).get(0));
             //System.out.println( matriz.get(i).get(j) + " "+ matriz.get(i).get(i) + " " + matriz.get(2).get(i)+" "+ matriz.get(3).get(i)+" "+ matriz.get(4).get(i));
-            if (j==numEst-1) {
-                System.out.print(matriz.get(j).get(i)+"\n");
-            }else{
-                System.out.print(matriz.get(j).get(i)+"  ");
+            for (int i = 0; i <= matriz.get(0).size() - 1; i++) {
+                System.out.println( matriz.get(0).get(i) + " "+ matriz.get(1).get(i) + " " + matriz.get(2).get(i)+" "+ matriz.get(3).get(i)+" ");
             }
+            
+        } catch (Exception e) {
+            System.out.println("Error al imprimir:"+e.getMessage());
         }
     }
     private boolean fileCheck(){
@@ -405,14 +412,99 @@ public class turing {
          }
          return aux;
     }
-    /* if((index<=cadSize && index>0)&& i==-1){
-            index=index+i;
-            return index;
-        }else if((index>=0 && index<cadSize) && i==1){
-            index=index+i;
-            return index;
-        }else if(index == && ){
+    private boolean addM(String path){
+        boolean res = false;
+        String aux="";
+        tabla = new ArrayList<String[]>();
+        try {
+            file = new File(path);
+            BufferedReader bf = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF8"));
+            Pattern stringComment = Pattern.compile(commen);
+            while((line=bf.readLine())!=null){
+                mat = stringComment.matcher(line);        
+                if(line.length()>1 && !mat.matches() && estStartM.equals("")  ){
+                    String[] cadplit= line.split(" ");
+                    if(cadplit.length == 2){
+                        if(isNumeric(cadplit[0]) &&  isNumeric(cadplit[1])){
+                            numEstM=Integer.parseInt(cadplit[0]);
+                            numSimM=Integer.parseInt(cadplit[1]);
+                        }else{
+                            return  false;
+                        }
+                        
+                    }else if(cadplit.length == 1){
+                        char[] charSplit = line.toCharArray();
+                        aux="(";
+                        for(int i=0; i<numSimM;i++ ){
+                            aux=aux+Character.toString(charSplit[i])+" ";
+                        }
+                        aux= aux.trim();
+                        aux=aux.replace(" ", "|");
+                        aux=aux+")+";
+                        simCinM=aux;
+                    }else{
+                        tabla.add(cadplit);
+                    }
+                }else{
+                    Pattern pat = Pattern.compile(intSim);
+                    mat = pat.matcher(line);
+                    if(!mat.matches() && isNumeric(line)){
+                        //System.out.println("no comment 2:"+line);
+                        if(estStartM == ""){
+                            estStartM=line;
+                        }else{
+                            estEndM=line;
+                        }
 
-        } */
-    
+                    }else{
+                        System.out.println("comment:"+line);
+                    }
+                }
+               
+            }
+        bf.close();
+        System.out.println(estStartM);
+        addT();
+        } catch (Exception e) {
+            System.out.println("Error al cargar macro:"+ e.getMessage());
+        }
+        return res;
+    }
+    private void addT(){
+        String aux="";
+        int flag=0,index=0,posit=Integer.parseInt(estStartM)+1;
+        //System.out.println("posit;"+posit);
+        //System.exit(1);
+        for (String string[] : tabla) {
+            //System.out.println(Arrays.toString(string));
+            for (String string2 : string) {
+                //System.out.println(string2);
+                if (flag <2) {
+                    if(aux==""){
+                        aux=string2;
+                    }else{
+                        aux=aux+":"+string2;
+                    }
+                    flag++;
+                } else {
+                    aux=aux+":"+string2;
+                    if (index<numSimM) {
+                        //System.out.println(aux+":"+posit);
+                        matriz.get(index).add(posit, aux);
+                        index++;
+                    } else {
+                        posit++;
+                        index=0;
+                        //System.out.println(matriz.get(index));
+                        //System.out.println(aux+":"+posit);
+                        matriz.get(index).add(posit, aux);
+                        index++;
+                    }
+                    //System.out.println(aux);
+                    flag=0;
+                    aux="";
+                }
+            }
+        }
+    }
 }
