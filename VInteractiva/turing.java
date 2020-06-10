@@ -52,26 +52,26 @@ public class turing {
                         if(isNumeric(cadplit[0]) &&  isNumeric(cadplit[1])){
                             numEst=Integer.parseInt(cadplit[0]);
                             numSim=Integer.parseInt(cadplit[1]);
-                            System.out.println("numEST:"+numEst);
-                            System.out.println("numsim:"+numSim);
+                            //System.out.println("numEST:"+numEst);
+                            //System.out.println("numsim:"+numSim);
                         }else{
                             return false;
                         }
                         
                         matriz = new ArrayList<List<String>>();
                         for(int i = 0; i<numSim;i++){
-                            System.out.println("Entre");
+                           // System.out.println("Entre");
                             matriz.add(new ArrayList<String>());
                         }
                     }else if(cadplit.length == 1){
-                        System.out.println(line);
+                        //System.out.println(line);
                         char[] charSplit = line.toCharArray();
                         aux="(";
                         for(int i=0; i<numSim;i++ ){
                             matriz.get(i).add(Character.toString(charSplit[i]));
                             aux=aux+Character.toString(charSplit[i])+" ";
                         }
-                        System.out.println("Alfabeto"+aux);
+                        //System.out.println("Alfabeto"+aux);
                         aux= aux.trim();
                         aux=aux.replace(" ", "|");
                         aux=aux+")+";
@@ -108,7 +108,7 @@ public class turing {
                     Pattern pat = Pattern.compile(intSim);
                     mat = pat.matcher(line);
                     if(!mat.matches() && isNumeric(line)){
-                        System.out.println("no comment 2:"+line);
+                        //System.out.println("no comment 2:"+line);
                         if(estStart == ""){
                             estStart=line;
                         }else{
@@ -141,10 +141,18 @@ public class turing {
 
         return resultado;
     }
+    private void infoM(){
+        System.out.println("Numero de Estados:"+numEst);
+        System.out.println("Numero de Simbolos:"+numSim);
+        System.out.println("Alfabeto:"+simCin);
+        System.out.println("Estado Inicial:"+estStart);
+        System.out.println("Estado Inicial:"+estEnd);
+
+    }
     private void printMatriz(){
         try {
-            System.out.println("num listas"+matriz.size());
-            System.out.println("T lista"+matriz.get(0).size());
+            //System.out.println("num listas"+matriz.size());
+            //System.out.println("T lista"+matriz.get(0).size());
             System.out.println("-------------------------");
             //System.out.println( matriz.get(0).get(0) + " "+ matriz.get(1).get(0) + " " + matriz.get(2).get(0)+" "+ matriz.get(3).get(0)+" "+ matriz.get(4).get(0));
             //System.out.println( matriz.get(i).get(j) + " "+ matriz.get(i).get(i) + " " + matriz.get(2).get(i)+" "+ matriz.get(3).get(i)+" "+ matriz.get(4).get(i));
@@ -431,6 +439,7 @@ public class turing {
                     if(cadplit.length == 2){
                         if(isNumeric(cadplit[0]) &&  isNumeric(cadplit[1])){
                             numEstM=Integer.parseInt(cadplit[0]);
+                            numEst=numEst+numEstM;
                             numSimM=Integer.parseInt(cadplit[1]);
                         }else{
                             return  false;

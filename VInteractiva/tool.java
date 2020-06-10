@@ -14,7 +14,7 @@ import java.util.regex.*;
 class tool implements ActionListener{
 	private JMenuBar mainMenuBar;
 	private JMenu menu,utilitis,macro;
-	private JMenuItem open,exit,save,addMacro,printTable;
+	private JMenuItem open,exit,save,addMacro,printTable,infoM;
 	private turing maquina;
 	private window w;
 	private tool t;
@@ -26,6 +26,7 @@ class tool implements ActionListener{
 		utilitis = new JMenu("Utilitis");
 		macro = new JMenu("Macro");
 		open = new JMenuItem("Abrir");
+		infoM = new JMenuItem("InfoTuring");
 		exit = new JMenuItem("Salir");
 		save = new JMenuItem("Guardar");
 		addMacro =  new JMenuItem("Add Macro");
@@ -72,6 +73,11 @@ class tool implements ActionListener{
 		printTable.addActionListener(this);
 		utilitis.add(printTable);
 
+		// add Macro CTRL-i
+		infoM.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I, ActionEvent.CTRL_MASK));
+		infoM.addActionListener(this);
+		utilitis.add(infoM);
+
 		
 
 		return mainMenuBar;
@@ -96,6 +102,9 @@ class tool implements ActionListener{
 		}
 		if (e.getSource() == printTable) {
 			print_Table();
+		}
+		if (e.getSource() == infoM) {
+			print_Info();
 		}
 		if (e.getSource() == addMacro){
 			String path = getPath();
@@ -152,6 +161,15 @@ class tool implements ActionListener{
 	private void print_Table(){
 		try {
 			Method printT = turing.class.getDeclaredMethod("printMatriz", new Class[0]);
+			printT.setAccessible(true);
+			printT.invoke(maquina, new Object[0]);
+		} catch (Exception e) {
+			System.out.println("Error:"+e.getMessage());
+		}
+	}
+	private void print_Info(){
+		try {
+			Method printT = turing.class.getDeclaredMethod("infoM", new Class[0]);
 			printT.setAccessible(true);
 			printT.invoke(maquina, new Object[0]);
 		} catch (Exception e) {
