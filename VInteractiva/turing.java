@@ -143,12 +143,16 @@ public class turing {
     }
     private void printMatriz(){
         try {
-            System.out.println(matriz.size());
+            System.out.println("num listas"+matriz.size());
+            System.out.println("T lista"+matriz.get(0).size());
             System.out.println("-------------------------");
             //System.out.println( matriz.get(0).get(0) + " "+ matriz.get(1).get(0) + " " + matriz.get(2).get(0)+" "+ matriz.get(3).get(0)+" "+ matriz.get(4).get(0));
             //System.out.println( matriz.get(i).get(j) + " "+ matriz.get(i).get(i) + " " + matriz.get(2).get(i)+" "+ matriz.get(3).get(i)+" "+ matriz.get(4).get(i));
-            for (int i = 0; i <= matriz.get(0).size() - 1; i++) {
-                System.out.println( matriz.get(0).get(i) + " "+ matriz.get(1).get(i) + " " + matriz.get(2).get(i)+" "+ matriz.get(3).get(i)+" ");
+            for (int i = 0; i < matriz.get(0).size(); i++) {
+                System.out.println();
+                for(int j = 0 ; j<=matriz.size()-1;j++)
+                //System.out.println(j+":"+i);
+                System.out.print( matriz.get(j).get(i)+" ");
             }
             
         } catch (Exception e) {
